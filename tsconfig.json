@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    // ...
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "node_modules/element-ui/types/**/*.d.ts",
+    "element-ui.d.ts"
+  ]
+}

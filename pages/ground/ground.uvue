@@ -1,0 +1,45 @@
+<template>
+
+	<scroll-view style="flex:1">
+		<view>
+			<search-item></search-item>
+		</view>
+		<view class="tabLine">
+			<tab-item img="static/cute.png" name="漫展汇总"></tab-item>
+			<tab-item img="static/cute.png" name="cos服饰"></tab-item>
+			<tab-item img="static/cute.png" name="约拍"></tab-item>
+			<tab-item img="static/cute.png" name="找搭档"></tab-item>
+		</view>
+	</scroll-view>
+	
+</template>
+
+<script>
+import searchItem from '@/component/searchItem.uvue'
+import tabItem from '@/component/tabItem.uvue'
+	export default {
+		components:{
+			searchItem,
+			tabItem
+		},
+		data() {
+			return {
+
+			}
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style scoped>
+.tabLine{
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	padding: 20rpx;
+	justify-content: space-around;
+	margin-top: 20rpx;
+}
+</style>
