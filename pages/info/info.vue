@@ -25,9 +25,6 @@
 				uni.navigateTo({
 					url: '/pages/info/info'
 				})
-			},
-			maskClick(e:any){
-				console.log('maskClick事件:', e);
 			}
 		},
 	}
@@ -98,7 +95,6 @@
 	margin-top: 75rpx;
 	text-align: center;
 	border-radius: 50rpx;
-/* 	background-image: linear-gradient(to bottom, #FF5853, #FF5853 80%); */
 	background-color: #FF5853;
 	color: #fff;
 	font-size: 40rpx;

@@ -6,29 +6,21 @@
 
 </template>
 
-<script>
-
-export default {
-		props:{
-			img:{
-				type: String,
-				required: true,
-			},
-			name:{
-				type: String,
-				required: true
-			}
-		},
-		data() {
-			const img = ref(this.$props.get('img'))
-			return {
-				img
-			}
-		},
-		methods: {
-			
-		}
+<script setup>
+import {ref} from 'vue'
+let props = defineProps({
+	img:{
+		type: String,
+		required: true,
+	},
+	name:{
+		type: String,
+		required: true
 	}
+})
+
+const img = ref(props.img)
+console.log(img)
 </script>
 
 <style scoped>
