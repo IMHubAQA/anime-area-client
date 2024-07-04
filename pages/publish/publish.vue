@@ -11,6 +11,9 @@
 			<image class="upload-btn" src="../../static/upload.png"></image>
 			<text>上传照片</text>
 		</view>
+		<view>
+			
+		</view>
 		<button class="register" @click="save">发布ฅ</button>
 	</view>
 </template>
