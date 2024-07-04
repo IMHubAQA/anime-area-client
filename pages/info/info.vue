@@ -1,33 +1,47 @@
 <template>
-	<scroll-view class="page">
+	<view class="body">
 		<view class="title">
 			<text style="color:#fff; font-size: 50rpx;font-weight: 700;">萌喵酱</text>
 		</view>
-		<image class="avatar" src="../../static/avatar.png" mode="aspectFit"></image>
-		<view class="pickers">
-		
+		<image class="avatar"  src="../../static/avatar.png" mode="aspectFit"></image>
+		<view class="input-group">
+			<text>出生日期</text>
+			<view class="date-picker">
+				<uni-datetime-picker type="date" :clear-icon="false" v-model="date" @maskClick="change" />
+			</view>
 		</view>
-		
-		
-		<button class="register" @click="info">保存ฅ</button>
-	</scroll-view>
+		<view class="input-group">
+			<text>性别</text>
+			<view class="radio-select">
+				<uni-data-checkbox v-model="selectedValue" :localdata="options" />
+			</view>
+		</view>
+		<view class="input-group">
+			<text style="width: 100rpx;">昵称</text>
+			<input class="input" placeholder="小主请填昵称~"/>
+		</view>
+		<button class="register" @click="save">保存ฅ</button>
+	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				date:'2021-2-12'
-			}
-		},
-		methods: {
-			info(){
-				uni.navigateTo({
-					url: '/pages/info/info'
-				})
-			}
-		},
-	}
+<script setup>
+
+import {reactive, ref} from 'vue'
+const date = ref('')
+const selectedValue = ref(1)
+const options=reactive([
+	{ value: 1, text: '男' },
+	{ value: 2, text: '女' },
+  ])
+const save=()=>{
+	console.log("-------")
+	uni.navigateTo({
+		url: '/pages/index/index'
+	})
+}
+const change=()=>{
+	
+}
 </script>
 
 <style scoped>
@@ -41,34 +55,43 @@
 	height: 20%;
 	color: #fff;
 }
-.pickers{
-	width: 300rpx;
-	height: 100rpx;
-	background-color: #FF5853;
+.date-picker{
+	width: 400rpx;
+	margin-left: 30rpx;
 }
-
+.picker{
+	display: flex;
+	align-items: center;
+	width: 90%;
+}
+.input{
+	width: 250rpx;
+	padding-left: 20rpx;
+	margin-left: 35rpx;
+	border: 1rpx solid gray;
+	height: 50rpx;
+	border-radius: 10rpx;
+	padding: 20rpx;
+}
 .avatar{
-	margin-top: 75rpx;
+	margin-top: 50rpx;
 	width: 200rpx;
 	height: 200rpx;
-	border-radius: 100rpx;
-	margin-bottom: 80rpx;
+	margin-bottom: 50rpx;
 }
-.page{
+.body{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 }
 .input-group{
 	display: flex;
 	flex-direction: row;
-	width: 75%;
-	height: 90rpx;
+	width: 80%;
+	height: 100rpx;
 	align-items: center;
-	border: 1px solid #979797;
-	border-radius: 20rpx;
 	margin-top: 30rpx;
 }
 .icon{
@@ -88,6 +111,11 @@
 	border-radius: 30rpx;
 	color: #fff;
 	text-align: center;
+}
+.radio-select{
+	width: 50%;
+	margin-left: 100rpx;
+	display: flex;
 }
 .register{
 	width: 500rpx;
