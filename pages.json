@@ -76,13 +76,13 @@
 				"pagePath": "pages/index/index",
 				"iconPath": "static/cute_un.png",
 				"selectedIconPath": "static/cute.png",
-				"text": "找妆娘"
+				"text": "首页"
 			},
 			{
 				"pagePath": "pages/ground/ground",
 				"iconPath": "static/groud_un.png",
 				"selectedIconPath": "static/ground.png",
-				"text": "广场"
+				"text": "找妆娘"
 			},
 			{
 				"pagePath": "pages/message/message",

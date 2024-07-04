@@ -33,15 +33,15 @@
 }
 .search-box{
 	width: 500rpx;
-	height: 85rpx;
+	height: 65rpx;
 	padding: 20rpx 20rpx;
 	border: 1rpx solid #D9D9D9;
-	border-radius: 10;
+	border-radius: 20rpx;
 	align-items: center;
 	display: flex;
 	justify-content: center;
 }
 .btn{
-	margin-left: 10rpx;
+	margin-left: 20rpx;
 }
 </style>

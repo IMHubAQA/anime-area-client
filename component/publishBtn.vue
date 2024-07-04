@@ -19,7 +19,8 @@
 .btn{
 	width: 100rpx;
 	height: 100rpx;
-	background-color: aqua;
+	background-color: #4D4D4D;
+	color:white;
 	border-radius: 50rpx;
 	position: absolute;
 	bottom: 10rpx;
