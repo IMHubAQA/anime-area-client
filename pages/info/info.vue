@@ -35,12 +35,12 @@ const options=reactive([
   ])
 const save=()=>{
 	console.log("-------")
-	uni.navigateTo({
+	uni.switchTab({
 		url: '/pages/index/index'
 	})
 }
 const change=()=>{
-	
+	console.log("**")
 }
 </script>
 
