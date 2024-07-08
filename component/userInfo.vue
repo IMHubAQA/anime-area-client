@@ -27,7 +27,7 @@ let props = defineProps({
 const userInfo = reactive({
 	name: 'sss',
 	gender: 1, //0男1女
-	avater: '', //头像
+	avater: 'http://pets-shop.oss-cn-beijing.aliyuncs.com/WechatIMG15.jpeg', //头像
 })
 const init=()=>{
 	if(props.data){

@@ -3,12 +3,33 @@
 		<view class="search">
 			<search-item></search-item>
 		</view>
-		<view class="publish-btn">
-			<publish-btn @click="publish"></publish-btn>
-		</view>
-	
+
+		
+		<!-- 帖子列表 -->
 		<view class="content">
 			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		<view class="content">
+			<content-item></content-item>
+		</view>
+		
+		<view class="publish-btn">
+			<publish-btn @click="publish"></publish-btn>
 		</view>
 	</view>
 </template>
@@ -38,9 +59,9 @@ const publish=()=>{
 	margin-bottom: 30rpx;
 }
 .publish-btn{
-	position: absolute;
-	top: 98vh;
-	right: 0vw;
+	position: fixed;
+	right: 30rpx;
+	bottom: 30rpx;
 }
 .content{
 	width: 100%;

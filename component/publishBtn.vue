@@ -22,7 +22,6 @@
 	background-color: #4D4D4D;
 	color:white;
 	border-radius: 50rpx;
-	position: absolute;
 	bottom: 10rpx;
 	right: 10rpx;
 	display: flex;
