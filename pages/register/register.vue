@@ -4,38 +4,169 @@
 			<text style="color:#fff; font-size: 50rpx;font-weight: 700;">萌喵酱</text>
 		</view>
 		<image class="avatar" src="../../static/avatar.png" mode="aspectFit"></image>
-		<view class="input-group">
-			<image class="icon" src="../../static/email.png" mode="aspectFit"></image>
-			<input class="input" placeholder="请输入邮箱"/>
-		</view>
-		<view class="input-group">
-			<image class="icon" src="../../static/yanzhengma.png" mode="aspectFit"></image>
-			<input class="input" placeholder="验证码"/>
-			<button class="btn">发送</button>
-		</view>
-		<view class="input-group">
-			<image class="icon" src="../../static/passwd.png" mode="aspectFit"></image>
-			<input class="input" placeholder="密码"/>
-		</view>
+		<uni-forms ref="formRef" class="uni-form" :modelValue="data" :rules="formRules">
+			<uni-forms-item name="email">
+				<view class="input-group">
+					<image class="icon" src="../../static/email.png" mode="aspectFit"></image>
+					<input class="input" v-model="data.email" placeholder="请输入邮箱"/>
+				</view>
+			</uni-forms-item>
+			<uni-forms-item name="code">
+				<view class="input-group">
+					<image class="icon" src="../../static/yanzhengma.png" mode="aspectFit"></image>
+					<input class="input" v-model="data.code" placeholder="验证码"/>
+					<button class="btn" @click="getVerifyCode" :disabled="countDownData.verifyCodeText !== '发送'">{{countDownData.verifyCodeText}}</button>
+				</view>
+			</uni-forms-item>
+			<uni-forms-item name="password">
+				<view class="input-group">
+					<image class="icon" src="../../static/passwd.png" mode="aspectFit"></image>
+					<input class="input" v-model="data.password" type="password" placeholder="密码"/>
+				</view>
+			</uni-forms-item>
+		</uni-forms>
+
 		<button class="register" @click="info">注册ฅ</button>
 	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				
+<script setup>
+import {reactive,ref} from 'vue'
+const countDownData=reactive({
+	verifyCodeText: '发送',
+})
+let timer = null;
+const formRef = ref(null)
+let countdown = 60;
+const data=reactive({
+	email: '',
+	code: '',
+	password:''
+})
+const formRules = reactive({
+  // 表单验证规则
+  // 对email字段进行必填验证
+  email: {
+  	rules: [{
+				required: true,
+				errorMessage: '请填写邮箱',
+			},
+			{
+				format: 'email',
+				errorMessage: '请输入正确的邮箱地址',
+			}]
+  },
+  code: {
+		rules: [{
+				required: true,
+				errorMessage: '请填写邮箱验证码!',
+			},
+			{
+				minLength: 1,
+				maxLength: 6,
+				errorMessage: '请输入6位邮箱验证码',
 			}
+		]
+	},
+
+	password: {
+			rules: [{
+					required: true,
+					errorMessage: '请设置密码!',
+				},
+				{
+					minLength: 6,
+					maxLength: 10,
+					errorMessage: '请输入6-10位密码',
+				}
+			]
 		},
-		methods: {
-			info(){
-				uni.navigateTo({
-					url: '/pages/info/info'
-				})
-			}
-		}
+})
+const validateForm = () => {
+  formRef.value.validate().then((res)=>{
+		return true;
+	}).catch((err)=>{
+		console.log("校验失败,",err)
+		return false;
+	})
+}
+const info=()=>{
+	formRef.value.validate().then((res)=>{
+		//接口请求
+			const requestTask = uni.request({
+				url: 'http://122.51.70.205:8000/user/v1/register', //仅为示例，并非真实接口地址。
+				data: data,
+				method:'POST',
+				success: function(res) {
+					console.log('rrrrr',res);
+					console.log(res.data);
+					if(res.data.code===200){
+						uni.showToast({
+							success() {
+								`注册成功🐱`
+							}
+						})
+						//成功跳转详细信息
+						uni.navigateTo({
+							url: '/pages/info/info'
+						})
+					}
+					
+				}
+			});
+			return true;
+		}).catch((err)=>{
+			console.log("校验失败,",err)
+			return false;
+		})
+}
+const validateEmail=()=>{
+	formRef.value.validateField('email').then((res)=>{
+		return true;
+	}).catch((err)=>{
+		console.log("校验失败,",err)
+		return false;
+	})
+}
+const getVerifyCode=()=>{
+	if(timer){
+		//正在倒计时
+		return
 	}
+	formRef.value.validateField('email').then((res)=>{
+		console.log(data.email)
+		const requestTask = uni.request({
+			url: 'http://122.51.70.205:8000/user/v1/verifyCode', //仅为示例，并非真实接口地址。
+			data: {
+		       email: data.email
+			},
+			success: function(res) {
+				console.log(res);
+				console.log(res.data);
+			}
+		});
+		timer = setInterval(()=>{
+			console.log(countdown)
+			countdown--;
+			countDownData.verifyCodeText = `${countdown}s`
+			if(countdown === 0){
+				stopCountDown()
+			}
+		}, 1000)
+	}).catch((err)=>{
+		console.log("校验失败,",err)
+		return false;
+	})
+}
+
+const stopCountDown=()=>{
+	clearInterval(timer)
+	timer = null;
+	countDownData.verifyCodeText = '发送'
+}
+
+
+
 </script>
 
 <style scoped>
@@ -50,6 +181,11 @@
 	color: #fff;
 }
 
+.uni-form{
+	display: flex;
+	flex-direction: column;
+	margin-left: 100rpx;
+}
 .avatar{
 	margin-top: 75rpx;
 	width: 200rpx;
@@ -67,12 +203,11 @@
 .input-group{
 	display: flex;
 	flex-direction: row;
-	width: 75%;
+	width: 80%;
 	height: 90rpx;
 	align-items: center;
 	border: 1px solid #979797;
 	border-radius: 20rpx;
-	margin-top: 30rpx;
 }
 .icon{
 	width: 100rpx;
