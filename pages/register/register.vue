@@ -3,7 +3,7 @@
 		<view class="title">
 			<text style="color:#fff; font-size: 50rpx;font-weight: 700;">萌喵酱</text>
 		</view>
-		<image class="avatar" src="../../static/avatar.png" mode="aspectFit"></image>
+		<image class="avatar" :src="data.avatar" mode="aspectFill" @click="chooseImg"></image>
 		<uni-forms ref="formRef" class="uni-form" :modelValue="data" :rules="formRules">
 			<uni-forms-item name="email">
 				<view class="input-group">
@@ -41,8 +41,48 @@ let countdown = 60;
 const data=reactive({
 	email: '',
 	code: '',
-	password:''
+	password:'',
+	avatar: '../../static/avatar.png'
 })
+const chooseImg=()=>{
+	uni.chooseImage({
+		count: 1, // 最多可以选择的图片数量
+		sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+		sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+		success: (resp) => {
+			console.log(resp.tempFilePaths[0])
+			const filePath = resp.tempFilePaths[0] //图片临时路径
+			const res = uploadImg(filePath)
+		}
+	})
+}
+
+const uploadImg=(filePath)=>{
+	const uploadUrl = 'http://122.51.70.205:9081/anime-common/upload-image';
+	const fileName = 'file'; // 文件参数的名称
+	uni.uploadFile({
+	    url: uploadUrl,
+	    filePath: filePath,
+	    name: fileName,
+	    formData: {
+	      // 其他表单数据
+	      'userId': 'test'
+	    },
+	    success: (res) => {
+	      console.log(res.data); // 服务器返回的响应数据
+		  const resp = JSON.parse(res.data)
+		  console.log(resp)
+		  if(resp){
+			  if(resp.code === 200){
+			  	data.avatar = resp.data.downloadUrl
+			  }
+		  }
+	    },
+	    fail: (err) => {
+	      console.error(err);
+	    }
+	});
+}
 const formRules = reactive({
   // 表单验证规则
   // 对email字段进行必填验证
