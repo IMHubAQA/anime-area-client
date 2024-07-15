@@ -142,13 +142,20 @@ const info=()=>{
 					console.log(res.data);
 					if(res.data.code===200){
 						uni.showToast({
-							success() {
-								`注册成功🐱`
-							}
+							title:'🐱注册成功～',
+							duration: 1000,
+							width: '50%'
 						})
 						//成功跳转详细信息
 						uni.navigateTo({
 							url: '/pages/info/info'
+						})
+						stopCountDown()
+					}else{
+						uni.showToast({
+							title:'😯注册失败:'+res.data.msg,
+							duration: 1000,
+							icon:'fail'
 						})
 					}
 					
@@ -168,48 +175,69 @@ const validateEmail=()=>{
 		return false;
 	})
 }
-const getVerifyCode=()=>{
-	if(timer){
-		//正在倒计时
-		return
-	}
-	formRef.value.validateField('email').then((res)=>{
-		console.log(data.email)
-		const requestTask = uni.request({
-			url: 'http://122.51.70.205:8000/user/v1/verifyCode', //仅为示例，并非真实接口地址。
-			data: {
-		       email: data.email
-			},
-			success: function(res) {
-				console.log(res);
-				console.log(res.data);
-			}
-		});
-		timer = setInterval(()=>{
-			console.log(countdown)
-			countdown--;
-			countDownData.verifyCodeText = `${countdown}s`
-			if(countdown === 0){
-				stopCountDown()
-			}
-		}, 1000)
-	}).catch((err)=>{
-		console.log("校验失败,",err)
-		return false;
-	})
-}
+const getVerifyCode = () => {
+  if (timer) {
+    // 正在倒计时
+    return;
+  }
 
+  formRef.value.validateField('email').then((res) => {
+    console.log(data.email);
+    const requestTask = uni.request({
+      url: 'http://122.51.70.205:8000/user/v1/verifyCode', //仅为示例,并非真实接口地址。
+      data: {
+        email: data.email,
+      },
+      success: function (res) {
+        console.log(res.data);
+        if (res.data.code !== 200) {
+          console.log('-----');
+          uni.showToast({
+            title: res.data.msg,
+            duration: 1000,
+			icon:'error'
+          });
+          return; // 这里直接返回,不执行后续的倒计时逻辑
+        }
+        startCountDown(); // 只有在请求成功且code为200时,才开始倒计时
+      },
+      fail: function (res) {
+        console.log(res);
+        uni.showToast({
+          title: '😯网络请求失败',
+          duration: 1000,
+          icon:'fail'
+        });
+        return; // 这里直接返回,不执行后续的倒计时逻辑
+      },
+    });
+  }).catch((err) => {
+    console.log('校验失败,', err);
+    return false;
+  });
+};
+
+const startCountDown = () => {
+  timer = setInterval(() => {
+    console.log(countdown);
+    countdown--;
+    countDownData.verifyCodeText = `${countdown}s`;
+    if (countdown === 0) {
+      stopCountDown();
+    }
+  }, 1000);
+};
 const stopCountDown=()=>{
 	clearInterval(timer)
 	timer = null;
+	countdown=60;
 	countDownData.verifyCodeText = '发送'
 }
-
-
 
 </script>
 
 <style scoped>
+@import '../../static/css/global.css';
 .title{
 	width: 100%;
 	display: flex;
@@ -221,11 +249,6 @@ const stopCountDown=()=>{
 	color: #fff;
 }
 
-.uni-form{
-	display: flex;
-	flex-direction: column;
-	margin-left: 100rpx;
-}
 .avatar{
 	margin-top: 75rpx;
 	width: 200rpx;
@@ -233,49 +256,5 @@ const stopCountDown=()=>{
 	border-radius: 100rpx;
 	margin-bottom: 80rpx;
 }
-.page{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-}
-.input-group{
-	display: flex;
-	flex-direction: row;
-	width: 80%;
-	height: 90rpx;
-	align-items: center;
-	border: 1px solid #979797;
-	border-radius: 20rpx;
-}
-.icon{
-	width: 100rpx;
-	height: 75rpx;
-/* 	border:1px solid #979797; */
-}
-.input{
-	width: 500rpx;
-	padding-left: 20rpx;
-}
-.btn{
-	width: 150rpx;
-	height: 80rpx;
-	margin-left: -200rpx;
-	background-color: #FF5853;
-	border-radius: 30rpx;
-	color: #fff;
-	text-align: center;
-}
-.register{
-	width: 500rpx;
-	height: 100rpx;
-	margin-top: 75rpx;
-	text-align: center;
-	border-radius: 50rpx;
-/* 	background-image: linear-gradient(to bottom, #FF5853, #FF5853 80%); */
-	background-color: #FF5853;
-	color: #fff;
-	font-size: 40rpx;
-}
+
 </style>
