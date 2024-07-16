@@ -61,10 +61,7 @@ const formRules = reactive({
 })
 const saveStorage=(v)=>{
 	let prefix = 'userInfo'
-	uni.setStorage({
-		key: prefix,
-		value: JSON.stringify(v)
-	})
+	uni.setStorageSync(prefix, JSON.stringify(v))
 }
 const login=()=>{
 	formRef.value.validate().then((res)=>{
@@ -82,8 +79,7 @@ const login=()=>{
 							width: '50%'
 						})
 						saveStorage(res.data.data)
-						//成功跳转详细信息
-						uni.navigateTo({
+						uni.switchTab({
 							url: '/pages/index/index'
 						})
 					}else{

@@ -3,7 +3,7 @@
 		<view class="title">
 			<text style="color:#fff; font-size: 50rpx;font-weight: 700;">萌喵酱</text>
 		</view>
-		<image class="avatar" :src="data.avatar" mode="aspectFill" @click="chooseImg"></image>
+		<image class="avatar" :src="data.avatarUrl" mode="aspectFill" @click="chooseImg"></image>
 		<uni-forms ref="formRef" class="uni-form" :modelValue="data" :rules="formRules">
 			<uni-forms-item name="email">
 				<view class="input-group">
@@ -32,6 +32,7 @@
 
 <script setup>
 import {reactive,ref} from 'vue'
+import {uploadImg} from '../../utils/util.js'
 const countDownData=reactive({
 	verifyCodeText: '发送',
 })
@@ -42,7 +43,7 @@ const data=reactive({
 	email: '',
 	code: '',
 	password:'',
-	avatar: '../../static/avatar.png'
+	avatarUrl: '../../static/avatar.png'
 })
 const chooseImg=()=>{
 	uni.chooseImage({
@@ -52,36 +53,9 @@ const chooseImg=()=>{
 		success: (resp) => {
 			console.log(resp.tempFilePaths[0])
 			const filePath = resp.tempFilePaths[0] //图片临时路径
-			const res = uploadImg(filePath)
+			data.avatarUrl = filePath;
 		}
 	})
-}
-
-const uploadImg=(filePath)=>{
-	const uploadUrl = 'http://122.51.70.205:9081/anime-common/upload-image';
-	const fileName = 'file'; // 文件参数的名称
-	uni.uploadFile({
-	    url: uploadUrl,
-	    filePath: filePath,
-	    name: fileName,
-	    formData: {
-	      // 其他表单数据
-	      'userId': 'test'
-	    },
-	    success: (res) => {
-	      console.log(res.data); // 服务器返回的响应数据
-		  const resp = JSON.parse(res.data)
-		  console.log(resp)
-		  if(resp){
-			  if(resp.code === 200){
-			  	data.avatar = resp.data.downloadUrl
-			  }
-		  }
-	    },
-	    fail: (err) => {
-	      console.error(err);
-	    }
-	});
 }
 const formRules = reactive({
   // 表单验证规则
@@ -133,12 +107,14 @@ const validateForm = () => {
 const info=()=>{
 	formRef.value.validate().then((res)=>{
 		//接口请求
+			const img = uploadImg(data.avatarUrl)
+			data.avatarUrl = img;
+			console.log(img)
 			const requestTask = uni.request({
 				url: 'http://122.51.70.205:8000/user/v1/register', //仅为示例，并非真实接口地址。
 				data: data,
 				method:'POST',
 				success: function(res) {
-					console.log('rrrrr',res);
 					console.log(res.data);
 					if(res.data.code===200){
 						uni.showToast({
@@ -153,7 +129,7 @@ const info=()=>{
 						stopCountDown()
 					}else{
 						uni.showToast({
-							title:'😯注册失败:'+res.data.msg,
+							title:'😯'+res.data.msg,
 							duration: 1000,
 							icon:'fail'
 						})
