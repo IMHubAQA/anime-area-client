@@ -1,7 +1,7 @@
 <template>
 	<!-- 点击放大图 -->
-	<view>
-		
+	<view class="fullImg" v-show="showImg">
+		<image :src="fullImg" ></image>
 	</view>
 	<view class="page">
 		<uni-forms ref="formRef" class="uni-form" :modelValue="data" :rules="formRules">
@@ -19,8 +19,9 @@
 	
 		<!-- 图片列表预览 -->
 		<view class="imgList">
-			<view v-for="(item, index) in tempList" :key="index">
-				<image class="imgItem" :src="item" mode="scaleToFill"></image>
+			<view class="img" v-for="(item, index) in tempList" :key="index">
+				<image class="icon" src="../../static/icon/del.png" @click="deleteImg(item)"></image>
+				<image class="imgItem" :src="item" mode="scaleToFill" @click="showFullImg(item)"></image>
 			</view>
 			<!-- 图片 -->
 			<view :class="tempList.length === 0 ? 'upload': 'upload-hasimg'" @click="upload">
@@ -48,6 +49,8 @@ const data = reactive({
 	category:[],
 	media:[]
 })
+const fullImg = ref('')
+const showImg = ref(false)
 const tempList = ref([])
 
 const chooseImg=()=>{
@@ -65,6 +68,22 @@ const chooseImg=()=>{
 		}
 	})
 }
+
+const showFullImg=(item)=>{
+	fullImg.value = item;
+	showImg.value = true;
+}
+
+const deleteImg=(item)=>{
+	var list = []
+	tempList.value.forEach((value)=>{
+		if(value !== item){
+			list.push(value);
+		}
+	});
+	tempList.value = list;
+}
+
 const upload=()=>{
 	chooseImg()
 }
@@ -155,6 +174,9 @@ const formRules = reactive({
 	color: #fff;
 	font-size: 40rpx;
 }
+.img{
+	position: relative;
+}
 .imgList{
 	width: 100%;
 	flex-wrap: wrap;
@@ -166,4 +188,13 @@ const formRules = reactive({
 	height: 220rpx;
 	margin: 10rpx;
 }
+.icon{
+	width: 50rpx;
+	height: 50rpx;
+	position: absolute; 
+	top: 10rpx;
+	right: 10rpx;
+	z-index: 8888;
+}
+
 </style>
