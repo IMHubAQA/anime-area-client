@@ -1,14 +1,19 @@
 <template>
 	<!-- 点击放大图 -->
-	<view class="fullImg" v-show="showImg">
-		<image :src="fullImg" ></image>
+	<view class="fullImg" v-show="showImg" @click="close">
+		<image class="fullImg2" :src="fullImg" mode="aspectFit"></image>
 	</view>
 	<view class="page">
 		<uni-forms ref="formRef" class="uni-form" :modelValue="data" :rules="formRules">
 			<uni-forms-item name="title">
 				<view class="title">
-					<text style="margin-right: 35rpx;line-height: 1.4em;">标题</text>
-					<input v-model="data.title" maxlength="15" type="text" placeholder="最多输入15字" />
+					<view style="flex-grow: 1; display: flex; justify-content: center;align-items: center;">
+						<text style="line-height: 1.4em;">标题</text>
+					</view>
+					<view style="flex-grow: 9;">
+						<input v-model="data.title" maxlength="15" type="text" placeholder="最多输入15字" />
+					</view>
+					
 				</view>
 			</uni-forms-item>		
 			<uni-forms-item name="content">
@@ -39,7 +44,7 @@
 
 <script setup>
 import {reactive,ref} from 'vue'
-import {uploadImg} from '../../utils/util.js'
+import {uploadImg,batchUploadImgs, getUserInfo, calSign} from '../../utils/util.js'
 const IMG_MAX_COUNT = 9;
 const formRef = ref(null)
 const data = reactive({
@@ -53,6 +58,9 @@ const fullImg = ref('')
 const showImg = ref(false)
 const tempList = ref([])
 
+const close=()=>{
+	showImg.value = false;
+}
 const chooseImg=()=>{
 	uni.chooseImage({
 		count: IMG_MAX_COUNT, // 最多可以选择的图片数量
@@ -115,6 +123,86 @@ const formRules = reactive({
 	}
 })
 
+
+
+//发布
+const save=()=>{
+	formRef.value.validate().then((res)=>{
+		const userInfo = getUserInfo()
+		console.log(userInfo)
+		if(userInfo === ""){
+			uni.showToast({
+				title:'😯请先登录～',
+				duration: 1000,
+				icon:'error'
+			})
+			uni.navigateTo({
+				url: '/pages/login/login'
+			})
+			return false;
+		}
+		let timestamp = new Date().getTime()
+		console.log(timestamp.toString())
+		let sign = calSign(data, timestamp.toString(), userInfo.userId.toString())
+		console.log(sign)
+		//上传图片
+		if(tempList.value.length > 0){
+			let urlList = batchUploadImgs(tempList.value)
+			console.log('urlList====', urlList)
+			let mediaList = []
+			for(let i=0;i<urlList.length;i++){
+				mediaList.push({
+					mType: 1,
+					picUrl: urlList[i],
+					videoUrl: ''
+				})
+			}
+			console.log(mediaList)
+			data.media.value = mediaList;
+		}
+		console.log('data-----',data)
+		uni.request({
+			url: 'http://122.51.70.205:8102/acomm/post/create',
+			data: data,
+			method:'POST',
+			header:{
+				uid: userInfo.userId,
+				uToken: userInfo.token,
+				timeStr: timestamp.toString(),
+				sign: sign
+			},
+			success: function(res) {
+				console.log(res.data);
+				if(res.data.code===200){
+					uni.showToast({
+						title:'🐱发送成功～',
+						duration: 1000,
+						width: '50%'
+					})
+					uni.switchTab({
+						url: '/pages/index/index'
+					})
+				}else{
+					uni.showToast({
+						title: res.data.msg,
+						duration: 1000,
+						icon:'error'
+					})
+				}
+			},
+		});
+		return true;
+	}).catch((err)=>{
+		console.log(err)
+		uni.showToast({
+			title: err,
+			duration: 1000,
+			icon:'error'
+		})
+		return false;
+	})
+}
+
 </script>
 
 <style scoped>
@@ -122,7 +210,8 @@ const formRules = reactive({
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	margin: 40rpx;
+	margin: 35rpx;
+	width: 100%;
 }
 
 .page{
@@ -194,7 +283,23 @@ const formRules = reactive({
 	position: absolute; 
 	top: 10rpx;
 	right: 10rpx;
-	z-index: 8888;
+	z-index: 8;
+}
+.fullImg{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 200;
+}
+.fullImg2{
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
 }
 
 </style>
