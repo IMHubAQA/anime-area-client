@@ -38,7 +38,7 @@
 		<view>
 			
 		</view>
-		<button class="register" @click="save">发布ฅ</button>
+		<button class="register" @click="saveData">发布ฅ</button>
 	</view>
 </template>
 
@@ -51,7 +51,7 @@ const data = reactive({
 	postType: 1,
 	title: '',
 	content:'',
-	category:[],
+	category:[1],
 	media:[]
 })
 const fullImg = ref('')
@@ -123,85 +123,78 @@ const formRules = reactive({
 	}
 })
 
-
-
-//发布
-const save=()=>{
-	formRef.value.validate().then((res)=>{
-		const userInfo = getUserInfo()
-		console.log(userInfo)
-		if(userInfo === ""){
-			uni.showToast({
-				title:'😯请先登录～',
-				duration: 1000,
-				icon:'error'
-			})
-			uni.navigateTo({
-				url: '/pages/login/login'
-			})
-			return false;
-		}
-		let timestamp = new Date().getTime()
-		console.log(timestamp.toString())
-		let sign = calSign(data, timestamp.toString(), userInfo.userId.toString())
-		console.log(sign)
-		//上传图片
-		if(tempList.value.length > 0){
-			let urlList = batchUploadImgs(tempList.value)
-			console.log('urlList====', urlList)
-			let mediaList = []
-			for(let i=0;i<urlList.length;i++){
-				mediaList.push({
-					mType: 1,
-					picUrl: urlList[i],
-					videoUrl: ''
-				})
-			}
-			console.log(mediaList)
-			data.media.value = mediaList;
-		}
-		console.log('data-----',data)
-		uni.request({
-			url: 'http://122.51.70.205:8102/acomm/post/create',
-			data: data,
-			method:'POST',
-			header:{
-				uid: userInfo.userId,
-				uToken: userInfo.token,
-				timeStr: timestamp.toString(),
-				sign: sign
-			},
-			success: function(res) {
-				console.log(res.data);
-				if(res.data.code===200){
-					uni.showToast({
-						title:'🐱发送成功～',
-						duration: 1000,
-						width: '50%'
-					})
-					uni.switchTab({
-						url: '/pages/index/index'
-					})
-				}else{
-					uni.showToast({
-						title: res.data.msg,
-						duration: 1000,
-						icon:'error'
-					})
-				}
-			},
-		});
-		return true;
-	}).catch((err)=>{
-		console.log(err)
+const handleUploadImages = async () => {
+  if (tempList.value.length > 0) {
+    let urlList = await batchUploadImgs(tempList.value);
+    let mediaList = [];
+    for (let i = 0; i < urlList.length; i++) {
+      mediaList.push({
+        mType: 1,
+        picUrl: urlList[i],
+        videoUrl: ''
+      });
+    }
+    console.log(mediaList);
+    data.media = mediaList;
+  }
+};
+const saveData = async () => {
+	const userInfo = getUserInfo()
+	console.log(userInfo)
+	if(userInfo === ""){
 		uni.showToast({
-			title: err,
+			title:'😯请先登录～',
 			duration: 1000,
 			icon:'error'
 		})
+		uni.navigateTo({
+			url: '/pages/login/login'
+		})
 		return false;
-	})
-}
+	}
+	let timestamp = new Date().getTime()
+	console.log(timestamp.toString())
+	// 上传图片
+	await handleUploadImages();
+	let sign = calSign(data, timestamp.toString(), userInfo.userId.toString())
+	  try {
+		const res = await uni.request({
+		  url: 'http://122.51.70.205:8102/acomm/post/create',
+		  data: data,
+		  method: 'POST',
+		  header: {
+			uid: userInfo.userId,
+			uToken: userInfo.token,
+			timeStr: timestamp.toString(),
+			sign: sign
+		  }
+		});
+	console.log(res)
+    if (res.data.code === 200) {
+      uni.showToast({
+        title: '🐱发送成功～',
+        duration: 1000,
+        width: '50%'
+      });
+      uni.switchTab({
+        url: '/pages/index/index'
+      });
+    } else {
+      uni.showToast({
+        title: res.data.msg,
+        duration: 1000,
+        icon: 'error'
+      });
+    }
+  } catch (err) {
+    console.error('Error in saveData:', err);
+    uni.showToast({
+      title: '保存失败',
+      duration: 1000,
+      icon: 'error'
+    });
+  }
+};
 
 </script>
 
