@@ -43,3 +43,34 @@ export const calSign = (data, timeStr, uId) => {
   const str = uId + timeStr + dataJson;
   return CryptoJS.SHA256(str).toString();
 }
+
+export const getContentList=async(data)=>{
+	const url = 'http://122.51.70.205:8102/acomm/post/list'
+	console.log(data)
+	const res = await uni.request({
+		url: url,
+		data: data,
+		method:'GET',
+		 header: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		  }
+	});
+	console.log(res.data)
+	return res.data
+}
+export const getContentDetail=async(data)=>{
+	const url = 'http://122.51.70.205:8102/acomm/post/info'
+	console.log(data)
+	const res = await uni.request({
+		url: url,
+		method:'GET',
+		data: {
+			'postId': Number(data)
+		},
+		header: {
+			'Content-Type': 'application/form-data'
+		 }
+	});
+	console.log(res.data)
+	return res.data
+}

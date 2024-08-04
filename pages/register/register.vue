@@ -160,7 +160,7 @@ const getVerifyCode = () => {
   formRef.value.validateField('email').then((res) => {
     console.log(data.email);
     const requestTask = uni.request({
-      url: 'http://122.51.70.205:8000/user/v1/verifyCode', //仅为示例,并非真实接口地址。
+      url: 'http://122.51.70.205:8000/user/v1/verifyCode', 
       data: {
         email: data.email,
       },

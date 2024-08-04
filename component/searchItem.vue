@@ -33,7 +33,7 @@
 }
 .search-box{
 	width: 500rpx;
-	height: 65rpx;
+	height: 50rpx;
 	padding: 20rpx 20rpx;
 	border: 1rpx solid #D9D9D9;
 	border-radius: 20rpx;

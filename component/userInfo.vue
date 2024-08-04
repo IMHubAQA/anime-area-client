@@ -11,7 +11,6 @@
 			<!-- 性别 -->
 			<image :src="genderSrc" class="gender"></image>
 		</view>
-	
 	</view>
 </template>
 
@@ -65,9 +64,6 @@ init()
 .gender{
 	width: 50rpx;
 	height: 50rpx;
-	
-}
-.nickname{
 	
 }
 .name{

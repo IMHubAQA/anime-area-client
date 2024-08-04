@@ -3,7 +3,8 @@
     "@vue/reactivity": "^3.4.31",
     "crypto-js": "^4.2.0",
     "element-plus": "^2.7.6",
-    "uview-ui": "^2.0.36"
+    "uview-ui": "^2.0.36",
+    "vue-router": "^4.4.1"
   },
   "devDependencies": {
     "unplugin-auto-import": "^0.17.6",

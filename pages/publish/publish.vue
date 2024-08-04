@@ -13,7 +13,6 @@
 					<view style="flex-grow: 9;">
 						<input v-model="data.title" maxlength="15" type="text" placeholder="最多输入15字" />
 					</view>
-					
 				</view>
 			</uni-forms-item>		
 			<uni-forms-item name="content">
@@ -199,6 +198,7 @@ const saveData = async () => {
 </script>
 
 <style scoped>
+@import '../../static/css/global.css';
 .title{
 	display: flex;
 	flex-direction: row;
@@ -278,21 +278,6 @@ const saveData = async () => {
 	right: 10rpx;
 	z-index: 8;
 }
-.fullImg{
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background-color: black;
-	z-index: 200;
-}
-.fullImg2{
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-}
+
 
 </style>
