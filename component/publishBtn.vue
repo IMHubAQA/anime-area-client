@@ -1,5 +1,5 @@
 <template>
-	<view class="btn">+</view>
+	<view class="p-btn">+</view>
 </template>
 
 <script>
@@ -16,7 +16,7 @@
 </script>
 
 <style scoped>
-.btn{
+.p-btn{
 	width: 100rpx;
 	height: 100rpx;
 	background-color: #4D4D4D;

@@ -11,65 +11,106 @@
 					{{ isConcerned? concerned:concern }}
 				</view>
 			</view>
+			<view class="title">
+				<text>{{data.postTitle}}</text>
+			</view>
+			<!-- 内容 -->
+			<view class="neirong">
+				{{data.postContent}}
+			</view>
+			<!-- 图片 -->
+			<view class="imgs">
+				<view class="list" v-for="media in data.media">
+					<image class="imgItem" :src="media.picUrl" mode="aspectFill" @click="showFullImg(media.picUrl)"></image>	
+				</view>
+			</view>
 		</view>
+		
+		<view class="relation">
+			<!-- 点赞 -->
+			<view class="item">
+				<image class="img" src="/static/like.png" mode="widthFix"></image>
+				<view class="num">{{data.LikeCnt}}</view>
+			</view>
+			<!-- 评论 -->
+			<view class="item">
+				<image class="img" src="/static/comment.png" mode="widthFix"></image>
+				<view class="num">{{data.ReplyCnt}}</view>
+			</view>
+			<!-- 收藏 -->
+			<view class="item">
+				<image class="img" src="/static/collect.png" mode="widthFix"></image>
+				<view class="num">{{data.collectCnt}}</view>
+			</view>
+			<!-- 转发 -->
+		</view>
+		
+		<view class="comment-content">
+			<textarea class="text-area" placeholder="评论..."></textarea>
+		</view>
+		
+		<!-- 评论 -->
 		
 	</view>
 </template>
 
 <script setup>
+import { ref, reactive } from 'vue'
+import { getContentDetail } from '../../utils/util.js'
+import { onLoad, onShow } from "@dcloudio/uni-app"
 
-import { useRoute } from 'vue-router'
-import {reactive, ref} from 'vue'
-import {getContentDetail} from '../../utils/util.js'
-const contentId = ref(0)
-const route = useRoute()
-console.log(route.query.id) // 获取页面跳转时传递的 id 参数
-
+const id = ref(0)
 const isConcerned = ref(false)
-const concerned=ref('已关注')
-const concern=ref('+ 关注')
-const data=reactive({
- "postId": 0,
- "postType": 0,
- "postTitle": "",
- "postContent": "",
- "media": [],
- "author": {
-	 name: '',
-	 icon:''
- },
- "LikeCnt": 0,
- "ReplyCnt": 0,
- "collectCnt": 0,
- "createTime": 0,
- "category": [],
- "onDoror": 0,
- "price": 0.1,
- "location": "",
- "mType": 0,
- "picUrl": "",
- "videoUrl": "",
- "uid": 0,
- "name": "",
- "icon": "",
- "id": 0
+const concerned = ref('已关注')
+const concern = ref('+ 关注')
+
+// Change this to a ref
+const data = ref(null)
+
+onLoad((options) => {
+  id.value = options.id
+  console.log(id.value)
+  // Call getContentInfo here to ensure it runs after id is set
+  getContentInfo(id.value)
 })
 
+onShow(() => {
+  console.log(id.value)
+  // You might not need to call getContentInfo here if it's already called in onLoad
+  // But if you do need it, make sure to check if id.value exists
+  if (id.value) {
+    getContentInfo(id.value)
+  }
+})
 
-const getContentInfo=async(id)=>{
-	let res = await getContentDetail(id)
-	data.value = res.data
-	console.log(data.value)
+const getContentInfo = async (id) => {
+  try {
+    let res = await getContentDetail(id)
+    console.log('API response:', res)
+    if (res.code === 200 && res.data) {
+      data.value = res.data
+      console.log('data set:', data.value)
+	  
+    } else {
+      console.error('Invalid API response:', res)
+    }
+   }
+   catch (error) {
+    console.error('Error fetching content:', error)
+  }
 }
+
 </script>
 
 <style scoped>
 .content{
-	padding: 35rpx;
+	width: 100%;
+	height: 100%;
 }
 .author{
 	display: flex;
 	align-items: center;
+	margin: 20rpx;
 }
 .icon-concern{
 	width: 80rpx;
@@ -109,4 +150,70 @@ const getContentInfo=async(id)=>{
 	margin-left: 20rpx;
 	color: #000;
 }
+.imgs{
+	margin-top: 30rpx;
+	display:flex;
+	width: 100%;
+	flex-wrap: wrap;
+}
+.list{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.imgItem{
+	width: 220rpx;
+	height: 220rpx;
+	margin: 10rpx;
+}
+.title{
+	padding-left: 35rpx;
+	margin-top: 25rpx;
+	font-size: 40rpx;
+	font-weight: 700;
+	color: #1A64F4;
+}
+.neirong{
+	padding: 20rpx;
+	margin-right: 35rpx;
+	height: 100rpx;
+	overflow-wrap: break-word;
+	white-space: normal;
+	word-break: break-word;
+	line-height: 45rpx;
+	text-overflow:ellipsis;
+	overflow:hidden;
+}
+.relation{
+	width: 100%;
+/* 	height: 75rpx; */
+	padding: 20rpx;
+	display: flex;
+	align-items: center;
+	flex: 1;
+	border-top: 1rpx solid #979797;
+	margin-top: 30rpx;
+}
+.item{
+	width: 20%;
+	/* padding: 20rpx; */
+	display: flex;
+	align-items: center;
+}
+.img{
+	width: 30%;
+}
+.num{
+	margin-left: 10rpx;
+}
+.comment-content{
+	margin: 0 20rpx;
+	border: 1px solid #D9D9D9;
+	border-radius: 20rpx;
+	height: 100rpx;
+}
+.text-area{
+	padding: 20rpx;
+}
+
 </style>

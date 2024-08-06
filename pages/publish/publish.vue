@@ -198,7 +198,7 @@ const saveData = async () => {
 </script>
 
 <style scoped>
-@import '../../static/css/global.css';
+/* @import '../../static/css/global.css'; */
 .title{
 	display: flex;
 	flex-direction: row;

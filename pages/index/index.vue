@@ -8,7 +8,7 @@
 		</view>
 		<!-- 帖子列表 -->
 		<view class="content-list">
-			<view class="content-page" v-for="(item, index) in contentList"  @click="toDetail(item.postId)">
+			<view class="content-page" v-for="(item, index) in contentList">
 				<!-- {{item}} -->
 				<view class="userInfo">
 					<!-- 头像 -->
@@ -19,12 +19,14 @@
 					<text class="nickname">{{ item.author.name }}</text>
 				</view>
 				<!-- 标题 -->
-				<view class="title">
-					<text>{{item.postTitle}}</text>
-				</view>
-				<!-- 内容 -->
-				<view class="content">
-					{{item.postContent}}
+				<view  @click="toDetail(item.postId)">
+					<view class="title">
+						<text>{{item.postTitle}}</text>
+					</view>
+					<!-- 内容 -->
+					<view class="content">
+						{{item.postContent}}
+					</view>
 				</view>
 				<!-- 图片 -->
 				<view class="imgs">
@@ -54,7 +56,7 @@
 			</view>
 		</view>
 		
-		<view class="publish-btn">
+		<view class="publish">
 			<publish-btn @click="publish"></publish-btn>
 		</view>
 	</view>
@@ -66,6 +68,7 @@ import publishBtn from '../../component/publishBtn.vue'
 import tabItem from '../../component/tabItem.vue'
 import {getContentList} from '../../utils/util.js'
 import { reactive,onMounted,ref } from 'vue'
+import { onLoad, onShow } from "@dcloudio/uni-app"
 const publish=()=>{
 	uni.navigateTo({
 		url: '/pages/publish/publish'
@@ -99,9 +102,13 @@ const toDetail=(index)=>{
 		url: '/pages/detail/detail?id='+index,
 	})
 }
-onMounted(()=>{
+onLoad(()=>{
 	queryContentList()
 })
+onShow(()=>{
+	queryContentList()
+})
+
 queryContentList()
 
 </script>
@@ -142,7 +149,7 @@ queryContentList()
 	margin-top: 20rpx;
 	margin-bottom: 30rpx;
 }
-.publish-btn{
+.publish{
 	position: fixed;
 	right: 30rpx;
 	bottom: 30rpx;
